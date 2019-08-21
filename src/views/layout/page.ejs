@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title><%= page.title %></title>
+        <meta name="description" content="<%= page.desc %>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body class="<%= page.screen %>">
+        <% include header %>
+
+        <main>
+            <%- body -%>
+        </main>
+    </body>
+</html>

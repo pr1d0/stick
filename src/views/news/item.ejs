@@ -1,0 +1,7 @@
+<article class="news__item news">
+    <h1 class="news__title"><%= news.title %></h1>
+    <div class="news__body"><%= news.body %></div>
+    <span class="news__comments">Comments: <%= news.comments.length %></span>
+     / 
+    <span class="news__date">Date: <%= new Date(news.date).toLocaleDateString() %></span>
+</article>

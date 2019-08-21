@@ -1,0 +1,7 @@
+<section class="news">
+    <div class="news__list">
+        <% newsList.forEach( news => { %>
+          <%- include('item', { news: news }); %>
+        <% }); %>
+    </div>
+</section>

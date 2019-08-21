@@ -1,0 +1,31 @@
+<section class="comments">
+    <% comments.forEach(function ( comment ) { %>
+        <div class="comments__comment comment" data-id="<%= comment.id %>">
+            <img class="comment__avatar" src="<%= comment.avatar %>" alt="Avatar">
+            <div class="comment__author"><%= comment.author %></div>
+            <div class="comment__date"><%= comment.createdAt %></div>
+            <div class="comment__content"><%= comment.content %></div>
+            <div class="comment__rating">
+                <span class="comment__rating-current"><%= comment.rating %></span>
+                <% if ( user ) { %>
+                    <span class="comment__rating-up">+</span>
+                    <span class="comment__rating-down">-</span>
+                <% } %>
+            </div>
+        </div>
+    <% }); %>
+    
+    <% if ( user ) { %>
+        <div class="comments__create">
+            <form action="/comment" method="post">
+                <input type="hidden" name="postid" value="<%= news.id %>">
+                <textarea class="textarea comments__create-textarea" name="comment" onfocus="this.value = '';">Enter your comment</textarea>
+                <button class="button">Send</button>
+            </form>
+        </div>
+    <% } else { %>
+        <div class="comments__create comments__create--unauthorized">
+            <h4>Please Log In and write a comment</h4>
+        </div>
+    <% } %>
+</section>

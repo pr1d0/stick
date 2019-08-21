@@ -1,0 +1,11 @@
+<article class="news__item news">
+    <header class="news__meta">
+        <h1 class="news__title"><%= news.title %></h1>
+        <span class="news__date"><%= news.date %></span>
+    </header>
+    <div class="news__body"><%= news.body %></div>
+</article>
+
+<% if ( news.comments ) { %>
+    <%- include('comment', { comments: news.comments, user: user }); %>
+<% } %>

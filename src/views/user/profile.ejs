@@ -1,0 +1,16 @@
+<section class="profile">
+    <img class="profile__avatar" src="<%= user.avatar %>" alt="Avatar">
+    <h1 class="profile__name"><%= user.username %></h1>
+    <div class="profile__comments">
+        <% if ( user.comments ) { %>
+            Total: <%= user.comments.length %>
+            <% user.comments.forEach(comment => { %>
+                <%= comment.content %>
+                <%= comment.createdAt %>
+            <% }); %>
+        <% } %>
+    </div>
+    <form action="http://localhost:3000/user/logout">
+        <button class="profile__exit">Exit</button>
+    </form>
+</section>
