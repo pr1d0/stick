@@ -22,6 +22,12 @@ const productImageFields = {
 	}
 };
 
+const optionFields = {
+	name: String,  // color
+	label: String, // Color
+	value: String, // XS, 44, Large
+};
+
 const optionSizeFields = {
 	size: {
 		type: String,
