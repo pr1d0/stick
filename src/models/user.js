@@ -25,9 +25,16 @@ const userSchema = new Schema({
         index: true,
         // unique: true,
     },
-    name: {
+    firstName: {
         type: String,
         trim: true,
+    },
+    lastName: {
+        type: String,
+        trim: true,
+    },
+    phone: {
+        type: Number,
     },
     twitter: {
         type: String,
