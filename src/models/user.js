@@ -1,29 +1,23 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'mongoose-bcrypt';
 import URLSlug from 'mongoose-url-slugs';
-import timestamps from 'mongoose-timestamp';
 import findOrCreate from 'mongoose-findorcreate';
+import { isEmail, isMobilePhone } from 'validator';
 
-const userSchema = new Schema({
+const userSchemaFields = {
     email: {
         type: String,
         lowercase: true,
         trim: true,
         index: true,
         unique: true,
-        // required: true,
+        required: true,
+        validate: [isEmail, 'invalid email']
     },
     password: {
         type: String,
-        // required: true,
+        required: true,
         bcrypt: true,
-    },
-    username: {
-        type: String,
-        lowercase: true,
-        trim: true,
-        index: true,
-        // unique: true,
     },
     firstName: {
         type: String,
@@ -33,40 +27,26 @@ const userSchema = new Schema({
         type: String,
         trim: true,
     },
+    username: {
+        type: String,
+        lowercase: true,
+        trim: true,
+        index: true,
+        unique: true,
+    },
     phone: {
-        type: Number,
-    },
-    twitter: {
         type: String,
-        trim: true,
-    },
-    recoveryCode: {
-        type: String,
-        trim: true,
-    },
-    active: {
-        type: Boolean,
-        default: true,
-    },
-    avatar: {
-        type: String,
-        default: '/media/user/avatar-default.jpg'
-    },
-    news: [{
-        type: Schema.Types.ObjectId,
-        ref: 'News',
-    }],
-    comments: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Comment',
-    }]
-});
+        validate: [isMobilePhone, 'invalid phone']
+    }
+};
+
+const userSchemaOptions = { timestamps: true };
+
+const userSchema = new Schema(userSchemaFields, userSchemaOptions);
 
 userSchema.plugin(bcrypt);
-userSchema.plugin(timestamps);
 userSchema.plugin(findOrCreate);
-userSchema.plugin(URLSlug('username'));
 
 const UserModel = mongoose.model('User', userSchema);
 
-export default UserModel;
+export default UserModel

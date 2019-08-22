@@ -1,8 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
-import timestamps from 'mongoose-timestamp';
-import URLSlug from 'mongoose-url-slugs';
+import urlSlug from 'mongoose-url-slugs';
 
-const Image = new Schema({
+const productImageFields = {
 	area: { 
 		type: String, 
 		enum: ['thumbnail', 'card', 'detail', 'zoom'],
@@ -10,29 +9,20 @@ const Image = new Schema({
 	},
 	url: {
 		type: String,
-		required: true,
 		unique: true
+	},
+	file: {
+		type: Buffer,
+		required: function() { return this.url === null },
 	},
 	order: {
 		type: Number,
 		default: 0,
 		min: 0
 	}
-});
-
-const Price = {
-	original: {
-		type: Number,
-		required: true,
-		min: 0
-	},
-	special: {
-		type: Number,
-		min: 0
-	}
 };
 
-const Size = new Schema({
+const optionSizeFields = {
 	size: {
 		type: String,
 		required: true
@@ -49,59 +39,66 @@ const Size = new Schema({
 		validate: [/[a-zA-Z0-9]/, 'Product sku should only have letters and numbers']
 	},
 	price: Price
-});
+};
 
-const SimpleProduct = new Schema({
-	color: {
-		type: String,
-		required: true,
-		default: 'Default'
-	},
-	images: {
-		type: [Image],
-		default: undefined,
-		required: true,
-	},
-	sizes: {
-		type: [Size],
-		default: undefined,
-		required: true,
-	},
-	price: Price,
-});
-
-const MasterProduct = new Schema({
-	brandName: String,
-	brandId: Number,
+const productFields = {
 	name: {
-		type: String,
-		required: true,
-		trim: true
-	},
-	description: {
 		type: String,
 		required: true,
 		trim: true
 	},
 	sku: {
 		type: String,
+		required: true,
+		trim: true
+	},
+	weight: {
+		type: Number,
 		required: true
 	},
-	weight: Number,
-	keywords: String,
-	availability: {
+	price: {
+		type: Number,
+		required: true,
+		min: 0
+	},
+	salePrice: {
+		type: Number,
+		required: true,
+		min: 0
+	},
+	shortDescription: {
 		type: String,
-		enum: ['available', 'disabled', 'preorder'],
+		required: true,
+		trim: true
+	},
+	status: {
+		type: String,
+		enum: ['enabled', 'disabled', 'preorder', 'archive'],
 		required: true,
 		default: 'disabled'
 	},
+	categories: [{
+		type: Number,
+		required: true
+	}],
+	description: {
+		type: String,
+		trim: true
+	},
+	brandName: String,
+	brandId: Number,
+	keywords: [String],
 	preorderReleaseDate: String,
 	preorderMessage: String,
-	price: Price,
+	options: [
+		{
+			name: String,
+			value: String,
+		}
+	],
 	images: {
 		type: [Image],
 		default: undefined,
-		required: true,
 	},
 	sizes: {
 		type: [Size],
@@ -116,17 +113,20 @@ const MasterProduct = new Schema({
 	stock: {
 		type: Number,
 		min: 0,
+		max: 999
 	},
 	simples: {
 		type: [SimpleProduct],
 		default: undefined
 	}
-});
+};
 
-MasterProduct.plugin(timestamps);
+const productOptions = { timestamps: true };
 
-SimpleProduct.plugin(URLSlug('brandName name'));
+const productSchema = new Schema(productFields, productOptions);
 
-const MasterProductModel = mongoose.model('MasterProduct', MasterProduct);
+productSchema.plugin(urlSlug('name'));
 
-export default MasterProductModel
+const ProductModel = mongoose.model('Product', productSchema);
+
+export default ProductModel
