@@ -1,15 +1,17 @@
 import mongoose, { Schema } from 'mongoose';
 import urlSlug from 'mongoose-url-slugs';
+import { isAlphanumeric } from 'validator'
 
 const productImageFields = {
-	area: { 
+	area: {
 		type: String, 
-		enum: ['thumbnail', 'card', 'detail', 'zoom'],
-		required: true
+		enum: ['thumbnail', 'card', 'detail', 'zoom', 'default'],
+		required: true,
+		default: 'default'
 	},
 	url: {
 		type: String,
-		unique: true
+		trim: true,
 	},
 	file: {
 		type: Buffer,
@@ -18,11 +20,12 @@ const productImageFields = {
 	order: {
 		type: Number,
 		default: 0,
-		min: 0
+		min: 0,
+		max: 10
 	}
 };
 
-const optionFields = {
+const option = {
 	name: String,  // color
 	label: String, // Color
 	value: String, // XS, 44, Large
@@ -44,7 +47,7 @@ const optionSizeFields = {
 		required: true, 
 		validate: [/[a-zA-Z0-9]/, 'Product sku should only have letters and numbers']
 	},
-	price: Price
+	price: Price,
 };
 
 const productFields = {
@@ -53,10 +56,16 @@ const productFields = {
 		required: true,
 		trim: true
 	},
-	sku: {
+	shortDescription: {
 		type: String,
 		required: true,
 		trim: true
+	},
+	sku: {
+		type: String,
+		required: true,
+		trim: true,
+		validate: [isAlphanumeric, 'Product sku should only have letters and numbers']
 	},
 	weight: {
 		type: Number,
@@ -67,64 +76,43 @@ const productFields = {
 		required: true,
 		min: 0
 	},
-	salePrice: {
-		type: Number,
-		required: true,
-		min: 0
-	},
-	shortDescription: {
-		type: String,
-		required: true,
-		trim: true
-	},
 	status: {
 		type: String,
 		enum: ['enabled', 'disabled', 'preorder', 'archive'],
 		required: true,
-		default: 'disabled'
+		default: 'disabled',
+		validate: [function(){ this.stock === 0 && this.status !== 'disabled' }, 'Only disabled allowed if stock 0']
 	},
 	categories: [{
 		type: Number,
-		required: true
+		required: true,
+		default: 0 // 0 is ID for category "unassigned products",
+		// validate: function(){ this.categories.one}
 	}],
+
+	// Additional
 	description: {
 		type: String,
 		trim: true
 	},
-	brandName: String,
-	brandId: Number,
-	keywords: [String],
-	preorderReleaseDate: String,
-	preorderMessage: String,
-	options: [
-		{
-			name: String,
-			value: String,
-		}
-	],
-	images: {
-		type: [Image],
-		default: undefined,
-	},
-	sizes: {
-		type: [Size],
-		default: undefined,
-		required: true,
-	},
-	color: {
-		type: String,
-		required: true,
-		default: 'Default'
+	salePrice: {
+		type: Number,
+		min: 0
 	},
 	stock: {
 		type: Number,
 		min: 0,
-		max: 999
+		max: 999,
+		default: 0
 	},
-	simples: {
-		type: [SimpleProduct],
-		default: undefined
-	}
+	keywords: [String],
+	preorderReleaseDate: String,
+	preorderMessage: String,
+	images: [productImageFields],
+};
+
+const childProductFields = {
+
 };
 
 const productOptions = { timestamps: true };
